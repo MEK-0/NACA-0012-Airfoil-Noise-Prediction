@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An engineering study of NACA 0012 airfoil self-noise: a reproducible Python pipeline, linear baseline, tuned XGBoost, and verified holdout results.">
+  <meta name="theme-color" content="#202724">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NACA 0012 Airfoil Noise Prediction">
+  <meta property="og:description" content="Five aerodynamic inputs. A linear baseline and tuned XGBoost. Explore verified results from 301 holdout observations.">
+  <meta property="og:url" content="https://mek-0.github.io/NACA-0012-Airfoil-Noise-Prediction/">
+  <meta property="og:image" content="https://mek-0.github.io/NACA-0012-Airfoil-Noise-Prediction/assets/predicted-vs-actual.png">
+  <title>NACA 0012 Airfoil Noise Prediction | ML Engineering Study</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <nav class="nav container" aria-label="Main navigation">
+    <a class="wordmark" href="#top"><span class="mark" aria-hidden="true">∿</span> MEK <span class="wordmark-divider">/</span> Engineering studies</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu <span aria-hidden="true">+</span></button>
+    <div id="nav-links" class="nav-links"><a href="#overview">Overview</a><a href="#method">Method</a><a href="#results">Results</a><a href="#demo">Interface</a><a class="nav-source" href="https://github.com/MEK-0/NACA-0012-Airfoil-Noise-Prediction">Source code <span aria-hidden="true">↗</span></a></div>
+  </nav>
+</header>
+<main id="main">
+  <section class="hero" id="top" aria-labelledby="project-title">
+    <div class="container">
+      <div class="eyebrow"><span class="status-dot"></span> Applied machine learning <span class="divider">/</span> Aeroacoustics</div>
+      <div class="hero-grid">
+        <div><h1 id="project-title">NACA 0012<br>Airfoil Noise<br><em>Prediction.</em></h1>
+          <p class="subtitle">Machine Learning-Based Prediction of Aerodynamic Self-Noise</p>
+          <p class="hero-description">Estimating scaled sound pressure level from five aerodynamic variables. A study from a linear baseline to tuned gradient boosting, with a reproducible Python pipeline and a Streamlit interface.</p>
+          <div class="actions"><a class="button button-light" href="#results">View results <span aria-hidden="true">↓</span></a><a class="button button-outline" href="https://github.com/MEK-0/NACA-0012-Airfoil-Noise-Prediction">GitHub repository <span aria-hidden="true">↗</span></a></div>
+        </div>
+        <div class="airfoil-panel">
+          <div class="figure-label"><span>01 / Geometry reference</span><span>NACA 0012</span></div>
+          <svg class="airfoil" viewBox="0 0 520 300" role="img" aria-labelledby="airfoil-title airfoil-desc">
+            <title id="airfoil-title">Schematic of a symmetric NACA 0012 airfoil</title><desc id="airfoil-desc">A symmetric airfoil outline with a chord reference and incoming flow arrows. Illustration only, not a flow simulation.</desc>
+            <defs><pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M 26 0 L 0 0 0 26" fill="none" stroke="#c1d0c3" stroke-opacity=".09"/></pattern><marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0L6 3L0 6" fill="none" stroke="#a7b9ac"/></marker></defs>
+            <rect width="520" height="300" fill="url(#grid)"/>
+            <g stroke="#a7b9ac" stroke-width="1" fill="none" marker-end="url(#arrow)"><path d="M20 100H98"/><path d="M20 150H70"/><path d="M20 200H98"/></g>
+            <text x="22" y="80" fill="#a7b9ac" font-size="12" font-family="monospace">U∞</text>
+            <path id="airfoil-outline" d="M95 150 C95 123 168 116 216 122 C290 130 390 145 470 150 C390 155 290 170 216 178 C168 184 95 177 95 150Z" fill="#adc4af" fill-opacity=".12" stroke="#c3d6c6" stroke-width="1.6"/>
+            <path d="M95 150H470" stroke="#a7b9ac" stroke-dasharray="4 6" stroke-opacity=".6"/>
+            <path d="M95 216V240M470 216V240M95 232H470" stroke="#a7b9ac" stroke-width=".8"/>
+            <text x="240" y="255" fill="#a7b9ac" font-size="11" font-family="monospace">CHORD LENGTH · c</text>
+          </svg>
+          <div class="figure-foot"><span>Symmetric airfoil section</span><span>Schematic · not CFD</span></div>
+          <div class="sample-facts"><div><strong>1,503</strong><span>observations</span></div><div><strong>5</strong><span>input variables</span></div><div><strong>2</strong><span>model families</span></div></div>
+        </div>
+      </div>
+      <div class="metric-strip" aria-label="Verified XGBoost holdout metrics">
+        <div class="metric-intro"><span class="eyebrow">Final model / XGBoost</span><p>301 holdout observations<br>80/20 split · seed 42</p></div>
+        <div class="metric"><span>R² score</span><strong>0.9620</strong><small>Variance explained on this split</small></div>
+        <div class="metric"><span>RMSE</span><strong>1.380 <small>dB</small></strong><small>Root mean squared error</small></div>
+        <div class="metric"><span>MAE</span><strong>0.899 <small>dB</small></strong><small>Mean absolute error</small></div>
+      </div>
+    </div>
+  </section>
+  <div class="study-meta container"><span>Author <strong>Mahmut Esat Kolay</strong></span><span>Study <strong>Supervised regression</strong></span><a href="./PROJECT_ANALYSIS.md">Read the repository audit <span aria-hidden="true">↗</span></a></div>
+
+  <section class="section container" id="overview" aria-labelledby="overview-title">
+    <div class="section-heading"><span class="section-number">01 / Context</span><h2 id="overview-title">Learning the acoustic response.</h2><p>A compact regression problem with a measurable engineering outcome.</p></div>
+    <div class="three-columns overview-cards"><article><span class="small-label">The problem</span><h3>Airflow produces sound.</h3><p>Airfoil self-noise varies with geometry, flow conditions and frequency. A single linear relationship may not capture the patterns in the measured response.</p></article><article><span class="small-label">The objective</span><h3>Estimate from five inputs.</h3><p>Use experimental observations to predict scaled sound pressure level, then compare a linear baseline with a model that can capture nonlinear interactions.</p></article><article><span class="small-label">The use case</span><h3>Explore measured conditions.</h3><p>Demonstrate a data-driven surrogate for acoustic analysis. This study supports model comparison and exploration within the dataset, with external validation left for future work.</p></article></div>
+  </section>
+
+  <section class="section section-tint" id="dataset" aria-labelledby="dataset-title"><div class="container">
+    <div class="section-heading split-heading"><div><span class="section-number">02 / Dataset</span><h2 id="dataset-title">NASA Airfoil Self-Noise.</h2></div><p>1,503 wind-tunnel observations of NACA 0012 airfoils. Five input features and one continuous target. No missing values or duplicate rows in the checked-in data.</p></div>
+    <div class="table-wrap"><table><caption>Input variables and observed ranges in the repository</caption><thead><tr><th scope="col">Input feature</th><th scope="col">Unit</th><th scope="col">Observed range</th><th scope="col">Repository field</th></tr></thead><tbody>
+      <tr><th scope="row">Frequency</th><td>Hz</td><td>200–20,000</td><td><code>Frequency</code></td></tr>
+      <tr><th scope="row">Angle of attack</th><td>°</td><td>0–22.2</td><td><code>Angle_of_Attack</code></td></tr>
+      <tr><th scope="row">Chord length</th><td>m</td><td>0.0254–0.3048</td><td><code>Chord_Length</code></td></tr>
+      <tr><th scope="row">Free-stream velocity</th><td>m/s</td><td>31.7–71.3</td><td><code>Free_Stream_Velocity</code></td></tr>
+      <tr><th scope="row">Suction-side displacement thickness</th><td>m</td><td>0.000400682–0.0584113</td><td><code>Suction_Side_Displacement_Thickness</code></td></tr>
+    </tbody></table></div>
+    <div class="target-callout"><span class="small-label">Prediction target</span><strong>Scaled sound pressure level <span>103.380–140.987 dB</span></strong><code>Sound_Pressure_Level</code></div>
+    <p class="source-note">Source: Brooks, Pope &amp; Marcolini (1989), <a href="https://doi.org/10.24432/C5VW2C">UCI Airfoil Self-Noise</a> · Dataset license: CC BY 4.0. Span and observer position were fixed. The raw <code>.csv</code> file is tab-separated; processed values are unchanged.</p>
+  </div></section>
+
+  <section class="section container" id="method" aria-labelledby="method-title">
+    <div class="section-heading"><span class="section-number">03 / Method</span><h2 id="method-title">From measurements to predictions.</h2><p>A modular workflow with a shared split and scaler for a fair baseline comparison.</p></div>
+    <ol class="pipeline"><li><span>01</span><strong>Dataset &amp; EDA</strong><small>Load · inspect · validate</small></li><li><span>02</span><strong>Split &amp; preprocess</strong><small>80/20 · training-fit scaler</small></li><li><span>03</span><strong>Linear baseline</strong><small>Ordinary least squares</small></li><li><span>04</span><strong>Tuned XGBoost</strong><small>54 settings · 5-fold CV</small></li><li><span>05</span><strong>Evaluate &amp; predict</strong><small>Holdout · saved artifacts</small></li></ol>
+    <div class="method-detail"><p><strong>Training:</strong> 1,202 observations. Grid search minimizes cross-validation mean squared error. XGBoost is triggered when baseline R² is below 0.85.</p><p><strong>Final estimator:</strong> 300 trees, depth 7, learning rate 0.1, subsample 0.8. These parameters were inspected directly from the saved model.</p></div>
+    <details><summary>Evaluation protocol and reproducibility notes</summary><p>The website reconstructs the 301-row holdout with <code>train_test_split(test_size=0.2, random_state=42)</code> and applies the saved scaler. Its mean, variance and sample count match the reconstructed training set. No model is retrained to generate these results.</p><p>The original comparison notebook evaluates all rows, including training data. Its charts are not used as holdout evidence here. Scaling is fitted before cross-validation in the original trainer; future work should put preprocessing inside each CV fold. The repository has no original split manifest or complete training log.</p><a href="./assets/metrics.json">Inspect metrics, split indices and artifact hashes ↗</a></details>
+  </section>
+
+  <section class="section section-tint" id="exploration" aria-labelledby="eda-title"><div class="container">
+    <div class="section-heading"><span class="section-number">04 / Exploration</span><h2 id="eda-title">Understand the data before the model.</h2><p>Descriptive analysis across all 1,503 observations. These figures summarize the data, not model accuracy.</p></div>
+    <div class="two-columns figures"><figure><a href="./assets/target-distribution.png"><img src="./assets/target-distribution.png" alt="Histogram of scaled sound pressure level, spanning 103.380 to 140.987 dB." loading="lazy" width="1138" height="722"></a><figcaption><span>Fig. 01</span><strong>Target distribution</strong>The model predicts a continuous acoustic measurement in decibels.</figcaption></figure><figure><a href="./assets/correlations.png"><img src="./assets/correlations.png" alt="Pearson correlation matrix. Frequency and target correlate at −0.391; displacement thickness and target at −0.313." loading="lazy" width="1117" height="898"></a><figcaption><span>Fig. 02</span><strong>Feature correlations</strong>Frequency and thickness have negative marginal correlations with the target. Correlation alone does not identify causal effects.</figcaption></figure></div>
+  </div></section>
+
+  <section class="section container" id="results" aria-labelledby="results-title">
+    <div class="section-heading split-heading"><div><span class="section-number">05 / Results</span><h2 id="results-title">A stronger fit on the holdout.</h2></div><p>Both saved models are evaluated on the same 301 observations. Values below are recomputed from the artifacts, rather than copied from notebook training-set plots.</p></div>
+    <div class="table-wrap result-table"><table><caption>Verified holdout model comparison · higher R² and lower errors are better</caption><thead><tr><th scope="col">Model</th><th scope="col">R²</th><th scope="col">MAE / dB</th><th scope="col">RMSE / dB</th></tr></thead><tbody><tr><th scope="row">Linear Regression <span class="table-tag">Baseline</span></th><td>0.5583</td><td>3.672</td><td>4.704</td></tr><tr class="selected-row"><th scope="row">XGBoost <span class="table-tag">Final model</span></th><td>0.9620</td><td>0.899</td><td>1.380</td></tr></tbody></table></div>
+    <div class="result-reading"><span class="large-number">70.7<small>%</small></span><p><strong>Lower RMSE than the linear baseline.</strong><br>MAE of 0.899 dB is an average absolute discrepancy, not a maximum error. R² of 0.962 describes explained variance on this split; it is not “96.2% prediction accuracy.”</p></div>
+    <figure class="wide-figure"><a href="./assets/predicted-vs-actual.png"><img src="./assets/predicted-vs-actual.png" alt="Measured versus predicted sound levels for both models on 301 holdout observations. XGBoost predictions cluster more closely around the diagonal than linear regression." loading="lazy" width="1788" height="818"></a><figcaption><span>Fig. 03</span><strong>Measured vs. predicted</strong>The dashed diagonal represents a perfect prediction. Both panels use the same scale and test rows.</figcaption></figure>
+    <figure class="wide-figure"><a href="./assets/residuals.png"><img src="./assets/residuals.png" alt="XGBoost holdout residuals against predicted sound level. The dashed line marks zero error; individual observations have errors larger than the mean absolute error." loading="lazy" width="1618" height="722"></a><figcaption><span>Fig. 04</span><strong>Residual diagnostics</strong>Residual = measured − predicted. Positive values indicate underprediction. Individual errors exceed the average, and no uncertainty interval is estimated.</figcaption></figure>
+    <p class="source-note">Evidence: <a href="./assets/metrics.json">full precision metrics &amp; artifact fingerprints</a>. The original README’s 0.89 dB MAE was imprecise; the saved model yields 0.899117 dB (0.90 dB at two decimals).</p>
+  </section>
+
+  <section class="section section-tint" id="importance" aria-labelledby="importance-title"><div class="container importance-grid">
+    <div class="section-heading"><span class="section-number">06 / Interpretability</span><h2 id="importance-title">What the trees use.</h2><p>Displacement thickness and chord length have the highest normalized average gain in this saved XGBoost model, followed by frequency.</p><p class="source-note">Gain measures improvement in the training objective at splits. It shows neither effect direction nor causation. Correlated features can share or redistribute importance; this is not a SHAP analysis.</p></div>
+    <figure><a href="./assets/feature-importance.png"><img src="./assets/feature-importance.png" alt="Normalized average gain: displacement thickness 36.0%, chord length 29.8%, frequency 18.9%, angle of attack 7.8%, free-stream velocity 7.4%." loading="lazy" width="1458" height="690"></a><figcaption><span>Fig. 05</span><strong>Saved-model feature importance</strong>Extracted directly from XGBoost; no new fitting.</figcaption></figure>
+  </div></section>
+
+  <section class="section container" id="demo" aria-labelledby="demo-title">
+    <div class="section-heading split-heading"><div><span class="section-number">07 / Application</span><h2 id="demo-title">Prediction interface preview.</h2></div><p>Explore the five inputs used by the Python application. This static preview does not calculate predictions. Production inference requires the Python model backend.</p></div>
+    <div class="demo-panel"><form id="preview-form" class="demo-controls" aria-label="Prediction interface preview" aria-describedby="preview-note">
+      <div class="panel-label">Input configuration <span>Observed dataset ranges</span></div>
+      <label for="frequency">Frequency <output for="frequency" id="frequency-value">2,000 Hz</output></label><input id="frequency" name="Frequency" type="range" min="200" max="20000" step="100" value="2000" data-unit="Hz" data-digits="0">
+      <label for="angle">Angle of attack <output for="angle" id="angle-value">4.0 °</output></label><input id="angle" name="Angle_of_Attack" type="range" min="0" max="22.2" step="0.1" value="4" data-unit="°" data-digits="1">
+      <label for="chord">Chord length <output for="chord" id="chord-value">0.2200 m</output></label><input id="chord" name="Chord_Length" type="range" min="0.0254" max="0.3048" step="0.0001" value="0.22" data-unit="m" data-digits="4">
+      <label for="velocity">Free-stream velocity <output for="velocity" id="velocity-value">39.6 m/s</output></label><input id="velocity" name="Free_Stream_Velocity" type="range" min="31.7" max="71.3" step="0.1" value="39.6" data-unit="m/s" data-digits="1">
+      <label for="thickness">Suction-side displacement thickness <output for="thickness" id="thickness-value">0.005000000 m</output></label><input id="thickness" name="Suction_Side_Displacement_Thickness" type="range" min="0.000400682" max="0.0584113" step="any" value="0.005" data-unit="m" data-digits="9">
+      <button class="button button-reset" type="reset">Reset inputs <span aria-hidden="true">↺</span></button>
+    </form><div class="demo-explanation"><span class="preview-badge">Interface preview · no inference</span><h3>Run the saved model<br>in Streamlit.</h3><p id="preview-note">The Python app standardizes your inputs and evaluates both saved models. GitHub Pages hosts this project study; it cannot run Python or load these model artifacts.</p><div class="command"><span>From the repository root</span><code>streamlit run app/app.py</code></div><p class="source-note">Being within each feature’s range does not guarantee a represented or physically consistent combination.</p><a class="text-link" href="https://github.com/MEK-0/NACA-0012-Airfoil-Noise-Prediction#installation">Installation &amp; application instructions ↗</a></div></div>
+    <noscript><p class="notice">JavaScript is off. The full study remains readable; input value labels and reset enhancements require JavaScript. This preview never produces predictions.</p></noscript>
+  </section>
+
+  <section class="section section-dark" id="engineering" aria-labelledby="engineering-title"><div class="container">
+    <div class="section-heading"><span class="section-number">08 / Engineering</span><h2 id="engineering-title">An inspectable project, end to end.</h2><p>Data preparation, model training and application code have distinct responsibilities.</p></div>
+    <div class="architecture-grid"><div class="terminal"><div class="terminal-header"><span>Repository architecture</span><span aria-hidden="true">/</span></div><pre><code>NACA-0012-Airfoil-Noise-Prediction/
+├── data/          <span># raw + processed observations</span>
+├── src/           <span># load, train, evaluate</span>
+├── models/        <span># estimators + scaler</span>
+├── notebooks/     <span># EDA + model comparison</span>
+├── app/           <span># Streamlit inference</span>
+├── tests/         <span># artifact + prediction checks</span>
+├── scripts/       <span># showcase evidence + validation</span>
+├── docs/          <span># static GitHub Pages study</span>
+└── main.py        <span># training entry point</span></code></pre></div><div class="engineering-list"><article><h3>Modular training</h3><p>Dedicated data loader, trainer and metric utilities, coordinated by a single entry point.</p></article><article><h3>Persisted inference</h3><p>Joblib artifacts keep the two estimators and training scaler available to the Streamlit app.</p></article><article><h3>Traceable evaluation</h3><p>Smoke tests check inference; the showcase generator records holdout indices, artifact hashes and environment versions.</p></article></div></div>
+    <div class="stack"><span class="small-label">Verified stack</span><ul><li>Python</li><li>Pandas</li><li>NumPy</li><li>Scikit-learn</li><li>XGBoost</li><li>Joblib</li><li>Matplotlib</li><li>Seaborn</li><li>Streamlit</li><li>Pytest</li></ul></div>
+  </div></section>
+
+  <section class="section container" id="limitations" aria-labelledby="limitations-title">
+    <div class="section-heading"><span class="section-number">09 / Scope &amp; next steps</span><h2 id="limitations-title">Good results have boundaries.</h2><p>The verified result is specific to this dataset, saved estimator and random split.</p></div>
+    <div class="two-columns limitations"><article><span class="small-label">Current limitations</span><h3>A small, shared experimental domain.</h3><p>Only 1,503 measurements and two model families are considered. Random train/test rows can share aerodynamic configurations, so the score does not establish generalization to new test conditions or other airfoils.</p><p>No external validation, uncertainty estimation or causal analysis is implemented. Existing physical checks print warnings rather than reject invalid data.</p></article><article><span class="small-label">Future work · not yet implemented</span><h3>Test transfer and quantify uncertainty.</h3><ul><li>Group validation by experimental condition.</li><li>Fit preprocessing inside each cross-validation fold.</li><li>Add permutation importance or SHAP analysis.</li><li>Evaluate calibrated prediction intervals.</li><li>Package and deploy a versioned inference API.</li></ul></article></div>
+  </section>
+</main>
+<footer class="site-footer"><div class="container footer-grid"><div><a class="wordmark" href="#top">MEK <span class="wordmark-divider">/</span> NACA 0012</a><p>A machine learning engineering study.<br>Mahmut Esat Kolay</p></div><div class="footer-links"><a href="https://github.com/MEK-0/NACA-0012-Airfoil-Noise-Prediction">Repository ↗</a><a href="./PROJECT_ANALYSIS.md">Project analysis</a><a href="./GITHUB_PAGES_DEPLOYMENT.md">Deployment guide</a><a href="./VALIDATION.md">Validation record</a><a href="./assets/metrics.json">Results evidence</a><a href="#top">Back to top ↑</a></div></div><div class="container footer-note">Dataset: Brooks, Pope &amp; Marcolini · UCI · CC BY 4.0. Repository source code has no declared license.</div></footer>
+</body>
+</html>
