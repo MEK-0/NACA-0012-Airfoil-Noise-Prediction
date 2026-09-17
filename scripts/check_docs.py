@@ -63,7 +63,7 @@ def main():
             assert url.fragment in page.ids, f'Missing section: {ref}'
     assert set(page.inputs) <= set(page.labels), 'Unlabeled preview controls'
     assert len(page.inputs) == 5
-    assert page.image_count == 5
+    assert page.image_count == 7
     assert (DOCS / '.nojekyll').is_file()
     assert 'Prediction Interface Preview' in source
     assert 'does not calculate predictions' in source

@@ -12,8 +12,6 @@ window.REPORT_TRANSLATIONS = {
     "type": "Document type",
     "report_type": "Technical Project Report",
     "date": "Date",
-    "reportid": "Report ID",
-    "identity_note": "Independent project archive maintained by the author.",
     "project_links": "Project links:",
     "repo": "Repository",
     "data_link": "Data information",
@@ -128,7 +126,13 @@ window.REPORT_TRANSLATIONS = {
     "updated": "Last updated: 18 September 2026.",
     "page_title": "NACA 0012 Airfoil Noise Prediction — Technical Project Report",
     "status_valid": "Input values are within the individual ranges. No prediction was calculated. Run Streamlit for model inference.",
-    "status_invalid": "Please enter a valid number within each stated range. No prediction was calculated."
+    "status_invalid": "Please enter a valid number within each stated range. No prediction was calculated.",
+    "historical_mounting_caption": "Figure A. Experimental airfoil mounting arrangement in the wind tunnel.",
+    "historical_mounting_alt": "Historical technical drawing of an airfoil mounted between wind-tunnel sidewalls, with seal detail and an end view.",
+    "experimental_configuration": "Experimental configuration",
+    "experimental_description": "The original measurements were obtained under controlled wind-tunnel conditions. The historical drawing below illustrates the wake survey instrumentation used downstream of the airfoil.",
+    "historical_rake_caption": "Figure B. Wake survey rake with static- and total-pressure probe locations.",
+    "historical_rake_alt": "Historical technical drawing of a wake survey rake showing static-pressure probes, total-pressure probes, airflow direction and the tunnel centreline."
   },
   "de": {
     "skip": "Zum Bericht",
@@ -142,8 +146,6 @@ window.REPORT_TRANSLATIONS = {
     "type": "Dokumenttyp",
     "report_type": "Technischer Projektbericht",
     "date": "Datum",
-    "reportid": "Berichtsnummer",
-    "identity_note": "Unabhängiges, vom Autor geführtes Projektarchiv.",
     "project_links": "Projektlinks:",
     "repo": "Repository",
     "data_link": "Datensatzinformationen",
@@ -258,6 +260,12 @@ window.REPORT_TRANSLATIONS = {
     "updated": "Zuletzt aktualisiert: 18. September 2026.",
     "page_title": "NACA 0012: Vorhersage des Eigengeräuschs — Technischer Projektbericht",
     "status_valid": "Die Eingabewerte liegen innerhalb der jeweiligen Bereiche. Es wurde keine Vorhersage berechnet. Für Modellvorhersagen Streamlit ausführen.",
-    "status_invalid": "Bitte für jedes Feld eine gültige Zahl innerhalb des angegebenen Bereichs eingeben. Es wurde keine Vorhersage berechnet."
+    "status_invalid": "Bitte für jedes Feld eine gültige Zahl innerhalb des angegebenen Bereichs eingeben. Es wurde keine Vorhersage berechnet.",
+    "historical_mounting_caption": "Abbildung A. Experimentelle Befestigungsanordnung des Tragflächenprofils im Windkanal.",
+    "historical_mounting_alt": "Historische technische Zeichnung eines zwischen den Windkanalseitenwänden befestigten Tragflächenprofils mit Dichtungsdetail und Stirnansicht.",
+    "experimental_configuration": "Versuchsaufbau",
+    "experimental_description": "Die ursprünglichen Messungen wurden unter kontrollierten Windkanalbedingungen durchgeführt. Die historische Zeichnung zeigt die stromabwärts des Profils eingesetzte Nachlaufmessvorrichtung.",
+    "historical_rake_caption": "Abbildung B. Nachlaufmessrechen mit Positionen der statischen und Gesamtdrucksonden.",
+    "historical_rake_alt": "Historische technische Zeichnung eines Nachlaufmessrechens mit statischen Drucksonden, Gesamtdrucksonden, Strömungsrichtung und Windkanalmittellinie."
   }
 };
