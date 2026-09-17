@@ -1,0 +1,5 @@
+# Python 3.12 recommended. Match versions recorded in the saved artifacts.
+# Other dependencies remain defined in requirements.txt; this is not a full lockfile.
+-r requirements.txt
+scikit-learn==1.6.1
+xgboost==3.0.2

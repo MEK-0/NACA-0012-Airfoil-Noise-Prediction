@@ -41,7 +41,7 @@ class DataLoader:
         """
         if not os.path.exists(self.raw_data_path):
             print(f"[ERROR] Data file not found at: {self.raw_data_path}")
-            print("Please ensure you have placed the 'airfoil_self_noise.dat' file in the 'data/raw/' directory.")
+            print("Please check the configured raw_data_path (default: data/raw/airfoil_self_noise.csv).")
             return None
 
         try:

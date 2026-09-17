@@ -3,6 +3,7 @@ import joblib
 import numpy as np
 import pytest
 import sys
+from pathlib import Path
 
 # Add project root to path to ensure imports work if needed
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -17,7 +18,7 @@ class TestModelPipeline:
     @pytest.fixture
     def artifacts(self):
         """Load models and scaler once for all tests."""
-        base_path = "models/trained_models"
+        base_path = Path(__file__).resolve().parents[1] / "models" / "trained_models"
         try:
             xgb = joblib.load(os.path.join(base_path, "xgboost_final.pkl"))
             lin = joblib.load(os.path.join(base_path, "linear_regression.pkl"))

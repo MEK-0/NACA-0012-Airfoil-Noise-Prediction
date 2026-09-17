@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+from pathlib import Path
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -15,7 +16,7 @@ st.set_page_config(
 # --- LOAD MODELS & SCALER ---
 @st.cache_resource
 def load_artifacts():
-    base_path = "models/trained_models"
+    base_path = Path(__file__).resolve().parents[1] / "models" / "trained_models"
     try:
         xgb_model = joblib.load(os.path.join(base_path, "xgboost_final.pkl"))
         lin_model = joblib.load(os.path.join(base_path, "linear_regression.pkl"))
@@ -71,7 +72,7 @@ input_df = user_input_features()
 st.image(
     "https://miro.medium.com/v2/resize:fit:1400/format:webp/1*Nr_A76YgWo5zvdzBw-OTRw.png",
     caption="Aerodynamic Flow and Lift Visualization on an Airfoil",
-    use_column_width=True
+    width="stretch"
 )
 
 st.title("NACA 0012 Airfoil Noise Prediction System")
@@ -116,7 +117,7 @@ if st.button("🚀 Calculate Noise Level", type="primary"):
         with c1:
             st.success("### XGBoost Model (Recommended)")
             st.metric(label="Predicted Sound Pressure Level (dB)", value=f"{prediction_xgb:.2f} dB",
-                      delta="High Accuracy")
+                      help="Accuracy is evaluated on a held-out dataset, not on this individual input.")
 
         # Linear Card (Benchmark)
         with c2:
@@ -128,14 +129,12 @@ if st.button("🚀 Calculate Noise Level", type="primary"):
         st.write("---")
         st.subheader("💡 Engineering Insight")
 
-        if prediction_xgb > 130:
-            st.error(
-                f"⚠️ **CRITICAL NOISE LEVEL ({prediction_xgb:.1f} dB)**: High aerodynamic stress detected. Consider reducing velocity ({input_df['Free_Stream_Velocity'][0]} m/s) or angle of attack.")
-        elif prediction_xgb < 115:
-            st.success(
-                f"✅ **OPTIMAL PERFORMANCE ({prediction_xgb:.1f} dB)**: The airfoil is operating within a quiet, efficient range.")
-        else:
-            st.info(f"ℹ️ **MODERATE NOISE LEVEL ({prediction_xgb:.1f} dB)**: Standard operating conditions.")
+        st.info(
+            "This estimate is the dataset's scaled sound pressure level. "
+            "It does not measure aerodynamic stress, efficiency, or operational safety. "
+            "Validation used a random holdout from wind-tunnel data; new airfoils and "
+            "unseen operating conditions require separate validation."
+        )
 
     else:
         st.error("Models could not be loaded. Please check the logs.")
