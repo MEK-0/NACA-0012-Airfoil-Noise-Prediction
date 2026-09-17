@@ -17,6 +17,7 @@ class Page(HTMLParser):
         self.labels = []
         self.inputs = []
         self.image_count = 0
+        self.translation_keys = set()
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -30,9 +31,15 @@ class Page(HTMLParser):
             self.labels.append(attrs.get('for'))
         if tag == 'input':
             self.inputs.append(attrs['id'])
+        for attribute in ['data-i18n', 'data-i18n-alt']:
+            if attribute in attrs:
+                self.translation_keys.add(attrs[attribute])
         if tag == 'img':
-            assert attrs.get('alt'), 'Image missing descriptive alt text'
-            self.image_count += 1
+            if attrs.get('aria-hidden') == 'true':
+                assert attrs.get('alt') == '', 'Decorative logo should have empty alt text'
+            else:
+                assert attrs.get('alt'), 'Image missing descriptive alt text'
+                self.image_count += 1
 
 
 def main():
@@ -58,7 +65,7 @@ def main():
     assert len(page.inputs) == 5
     assert page.image_count == 5
     assert (DOCS / '.nojekyll').is_file()
-    assert 'Prediction interface preview' in source
+    assert 'Prediction Interface Preview' in source
     assert 'does not calculate predictions' in source
     assert not re.search(r'https?://(?:localhost|127\.0\.0\.1)|/Users/|/private/', source)
     metrics = json.loads((DOCS / 'assets/metrics.json').read_text())['metrics']
@@ -69,8 +76,16 @@ def main():
     css = (DOCS / 'styles.css').read_text()
     for ref in re.findall(r'url\([\'"]?([^\)\'\"]+)', css):
         assert (DOCS / ref).is_file(), f'Missing CSS asset: {ref}'
-    assert '@media(max-width:760px)' in css.replace(' ', '')
-    assert 'prefers-reduced-motion' in css
+    assert '@media(max-width:600px)' in css.replace(' ', '')
+    language_source = (DOCS / 'assets/lang-data.js').read_text()
+    translations = json.loads(language_source.split('window.REPORT_TRANSLATIONS = ', 1)[1].rstrip(';\n'))
+    assert translations['en'].keys() == translations['de'].keys(), 'Translation keys differ'
+    assert page.translation_keys <= translations['en'].keys(), 'Untranslated page element'
+    assert all(value.strip() for lang in translations.values() for value in lang.values())
+    assert '<html lang="en">' in source
+    for key in ['status_valid', 'status_invalid', 'page_title']:
+        assert key in translations['de']
+    print(f'PASS: {len(translations["en"])} complete English/German translation pairs.')
     print(f'PASS: {local_count} local references, {len(page.ids)} unique IDs, '
           f'{page.image_count} images, 5 labeled inputs, metric consistency and Pages paths.')
 

@@ -44,4 +44,4 @@ To check repository-subpath resolution locally, copy `docs/` into a temporary di
 
 ## After activation
 
-Check desktop, tablet and mobile layouts, the mobile menu, keyboard navigation, slider labels, image links and footer links at the public repository-subpath URL. Confirm the preview is clearly labeled and never shows a numerical prediction. Only describe the site as live after a successful deployment and a public URL check.
+Check desktop, tablet and mobile layouts, English/German switching, keyboard navigation, number-field labels, image links and footer links at the public repository-subpath URL. Confirm the preview is clearly labeled and never shows a numerical prediction. Only describe the site as live after a successful deployment and a public URL check.

@@ -1,42 +1,53 @@
-/* Progressive enhancement only. This static preview never predicts a value. */
+/* No backend calls: language selection and local form validation only. */
 'use strict';
-document.documentElement.classList.add('js');
-const menuButton = document.querySelector('.menu-toggle');
-const menu = document.querySelector('#nav-links');
-function closeMenu() {
-  menu.classList.remove('is-open');
-  menuButton.setAttribute('aria-expanded', 'false');
-}
-menuButton.addEventListener('click', () => {
-  const open = menuButton.getAttribute('aria-expanded') !== 'true';
-  menuButton.setAttribute('aria-expanded', String(open));
-  menu.classList.toggle('is-open', open);
-});
-menu.addEventListener('click', (event) => {
-  if (event.target.closest('a')) closeMenu();
-});
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && menuButton.getAttribute('aria-expanded') === 'true') {
-    closeMenu();
-    menuButton.focus();
+(() => {
+  const translations = window.REPORT_TRANSLATIONS;
+  if (!translations) return; // The complete English report remains readable.
+  let language = 'en';
+  let statusKey = '';
+  const form = document.getElementById('preview-form');
+  const status = document.getElementById('preview-status');
+  const languageButtons = document.querySelectorAll('[data-language]');
+
+  function setLanguage(next) {
+    if (!Object.hasOwn(translations, next)) return;
+    language = next;
+    document.documentElement.lang = next;
+    document.title = translations[next].page_title;
+    document.querySelectorAll('[data-i18n]').forEach((element) => {
+      element.textContent = translations[next][element.dataset.i18n];
+    });
+    document.querySelectorAll('[data-i18n-alt]').forEach((element) => {
+      element.alt = translations[next][element.dataset.i18nAlt];
+    });
+    languageButtons.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.language === next));
+    });
+    status.textContent = statusKey ? translations[next][statusKey] : '';
   }
-});
-const form = document.querySelector('#preview-form');
-const inputs = [...form.querySelectorAll('input[type="range"]')];
-function updateValue(input) {
-  const digits = Number(input.dataset.digits);
-  const value = Number(input.value).toLocaleString('en-US', {
-    minimumFractionDigits: digits, maximumFractionDigits: digits
+
+  languageButtons.forEach((button) => {
+    button.addEventListener('click', () => setLanguage(button.dataset.language));
   });
-  document.getElementById(`${input.id}-value`).textContent = `${value} ${input.dataset.unit}`;
-  input.setAttribute('aria-valuetext', `${value} ${input.dataset.unit}`);
-}
-inputs.forEach((input) => {
-  updateValue(input);
-  input.addEventListener('input', () => updateValue(input));
-});
-form.addEventListener('submit', (event) => event.preventDefault());
-form.addEventListener('reset', () => {
-  // Reset default values before refreshing labels, without relying on event timing.
-  inputs.forEach((input) => { input.value = input.defaultValue; updateValue(input); });
-});
+  function checkInputs() {
+    statusKey = form.checkValidity() ? 'status_valid' : 'status_invalid';
+    status.textContent = translations[language][statusKey];
+  }
+  const checkButton = document.getElementById('check-inputs');
+  checkButton.disabled = false;
+  checkButton.addEventListener('click', checkInputs);
+  // Native validation is queried above; translated feedback stays consistent
+  // even when the browser's interface language differs from the report.
+  form.noValidate = true;
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    checkInputs();
+  });
+  function clearStatus() {
+    statusKey = '';
+    status.textContent = '';
+  }
+  form.addEventListener('input', clearStatus);
+  form.addEventListener('reset', clearStatus);
+  setLanguage('en');
+})();
